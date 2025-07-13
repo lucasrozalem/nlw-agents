@@ -2,9 +2,16 @@ import { reset, seed } from "drizzle-seed";
 import { db, sql } from "./connection.ts";
 import { schema } from "./schema/index.ts";
 
-await reset(db, schema);
+// Reset apenas as tabelas que não usam tipos vector
+const seedSchema = {
+  rooms: schema.rooms,
+  questions: schema.questions,
+  // Excluindo audioChunks porque usa tipo vector que não é suportado pelo drizzle-seed
+};
 
-await seed(db, schema).refine((f) => {
+await reset(db, seedSchema);
+
+await seed(db, seedSchema).refine((f) => {
   return {
     rooms: {
       count: 5,
